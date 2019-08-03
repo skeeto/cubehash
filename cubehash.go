@@ -24,7 +24,7 @@ const (
 	h = 512
 )
 
-var invalidErr = errors.New("invalid data")
+var invalidErr = errors.New("invalid CubeHash state")
 
 type cubehash struct {
 	s   [32]uint32
@@ -90,11 +90,21 @@ func (c *cubehash) Sum(p []byte) []byte {
 
 func (c *cubehash) Reset() {
 	x := &c.s
+
 	x[0] = h / 8
 	x[1] = b
 	x[2] = r
+	for n := 3; n < 32; n++ {
+		x[n] = 0
+	}
 	for n := 0; n < i; n++ {
 		round(x)
+	}
+
+	// Sanitize the buffer while we're at it
+	c.n = 0
+	for n := 0; n < b; n++ {
+		c.buf[n] = 0
 	}
 }
 

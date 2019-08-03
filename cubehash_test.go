@@ -35,8 +35,9 @@ func TestSum(t *testing.T) {
 		},
 	}
 
+	c := New()
 	for _, r := range table {
-		c := New()
+		c.Reset()
 		c.Write([]byte(r.in))
 		got := fmt.Sprintf("%x", c.Sum(nil))
 		if got != r.want {
